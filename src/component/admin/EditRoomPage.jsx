@@ -78,7 +78,7 @@ const EditRoomPage = () => {
                 // API call to delete room
                 const result = await ApiService.deleteRoom(roomId);
                 if (result.statusCode === 200) {
-                    setSuccess('Room Deleted successfully.');
+                    setSuccess('Room deleted successfully.');
                     setTimeout(() => {
                         setSuccess('');
                         navigate('/admin/manage-rooms');

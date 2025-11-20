@@ -36,7 +36,7 @@ const EditBookingPage = () => {
             // API call to delete booking by ID
             const response = await ApiService.deleteBooking(bookingId);
             if (response.statusCode === 200) {
-                setSuccess("Booking is deleted successfully")
+                setSuccess("Booking deleted successfully")
                 
                 setTimeout(() => {
                     setSuccess('');

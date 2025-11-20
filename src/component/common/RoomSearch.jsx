@@ -32,7 +32,7 @@ const RoomSearchPage = () => {
   }, []); // Empty dependency array ensures it runs once on mount
 
 
-  const showError = (message, timeout = 4000) => {
+  const showError = (message, timeout = 5000) => {
     setError(message);
     setTimeout(() => setError(''), timeout);
   };

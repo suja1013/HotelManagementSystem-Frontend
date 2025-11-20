@@ -72,7 +72,7 @@ const RoomDetailsPage = () => {
     // Calculate total guests and total price
     const totalGuests = numAdults + numChildren;
     const roomPricePerNight = roomDetails.roomPrice;
-    const totalPrice = roomPricePerNight * totalDays;
+    const totalPrice = roomPricePerNight * (totalDays-1);
 
     setTotalPrice(totalPrice);
     setTotalGuests(totalGuests);
@@ -134,23 +134,14 @@ const RoomDetailsPage = () => {
     return <p className='room-detail-loading'>Room not found</p>;
   }
 
-  const { roomType, roomPrice, bookings } = roomDetails;
-
-  // Get today's date (ignore time for simplicity)
-  const today = new Date().setHours(0, 0, 0, 0);
-
-  // Filter bookings to show only future or ongoing ones
-  const activeBookings = (bookings || []).filter((booking) => {
-    const checkOut = new Date(booking.checkOutDate).setHours(0, 0, 0, 0);
-    return checkOut >= today;  // keep if checkout date is today or later
-  });
+  const { roomType, roomPrice, roomDescription} = roomDetails;
 
   return (
     <div className="room-details-booking">
       {/* Show booking success message */}
       {showMessage && (
         <p className="booking-success-message">
-          Booking is successful and the Booking Confirmation code is {confirmationCode}.
+          Booking successful! Here is your confirmation code: {confirmationCode}.
         </p>
       )}
 
@@ -167,23 +158,8 @@ const RoomDetailsPage = () => {
       <div className="room-details-info">
         <h3>Room Type: {roomType}</h3>
         <p>Room Price: ${roomPrice} / night</p>
+        <p>Room Description: {roomDescription}</p>
       </div>
-
-      {/* Show existing future/ongoing bookings only */}
-      {activeBookings && activeBookings.length > 0 && (
-        <div>
-          <h3>Existing Booking Details</h3>
-          <ul className="booking-list">
-            {activeBookings.map((booking, index) => (
-              <li key={booking.id} className="booking-item">
-                <span className="booking-number">Booking {index + 1}</span>
-                <span className="booking-text">Check-in Date: {booking.checkInDate}</span>
-                <span className="booking-text">Check-Out Date: {booking.checkOutDate}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       <div className="booking-info">
         <button className="book-now-button" onClick={() => setShowDatePicker(true)}>Book Now</button>

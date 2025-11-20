@@ -75,7 +75,7 @@ const AddRoomPage = () => {
             // API call to add room
             const result = await ApiService.addRoom(formData);
             if (result.statusCode === 200) {
-                setSuccess('Room Added successfully.');
+                setSuccess('Room added successfully.');
                 
                 // Clear success message and navigate back to Manage Rooms after 3s
                 setTimeout(() => {

@@ -61,7 +61,7 @@ function RegisterPage() {
                 setTimeout(() => {
                     setSuccessMessage('');
                     navigate('/');
-                }, 2000);
+                }, 4000);
             }
         }
          catch (error) {

@@ -99,6 +99,38 @@ body {
   width: 100%;
 }
 
+.navbar-ul li .navlink-style {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.98rem;
+  position: relative;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.navbar-ul li .navlink-style::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--secondary);
+  transition: width 0.3s ease;
+}
+
+/* Hover and active */
+.navbar-ul li .navlink-style:hover,
+.navbar-ul li .navlink-style.active {
+  color: var(--secondary); /* entire word turns yellow */
+}
+
+.navbar-ul li .navlink-style:hover::after,
+.navbar-ul li .navlink-style.active::after {
+  width: 100%;
+}
+
 /* AUTH PAGES */
 .auth-container {
   max-width: 420px;
@@ -676,31 +708,6 @@ button[type="submit"]:hover {
   margin-bottom: 6px;
 }
 
-/* EXISTING BOOKINGS */
-.booking-list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 10px;
-}
-
-.booking-item {
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.booking-number {
-  font-weight: 600;
-  color: var(--primary);
-}
-
-.booking-text {
-  color: var(--text-dark);
-}
 
 /* BOOKING INFO */
 .booking-info {

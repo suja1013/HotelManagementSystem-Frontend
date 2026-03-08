@@ -15,7 +15,7 @@ const ProfilePage = () => {
         const response = await ApiService.getUserProfile();
         const userPlusBookings = await ApiService.getUserBookings(response.user.id);
         setUser(userPlusBookings.user);
-      } 
+      }
       catch (error) {
         setError(error.response?.data?.message || error.message);
       }
@@ -29,9 +29,9 @@ const ProfilePage = () => {
 
     // If input is empty, reset bookings details and display all the bookings
     if (!confirmationCode.trim()) {
-      setBookingDetails(null);   
-      setError(null);            
-      return;                    
+      setBookingDetails(null);
+      setError(null);
+      return;
     }
 
     // Booking confirmation code is provided, then search that booking
@@ -39,7 +39,7 @@ const ProfilePage = () => {
       const response = await ApiService.getBookingByConfirmationCode(confirmationCode);
       setBookingDetails(response.booking);
       setError(null);
-    } 
+    }
     catch (error) {
       setBookingDetails(null);  // no specific booking to show
       setError(error.response?.data?.message || error.message);
@@ -92,6 +92,9 @@ const ProfilePage = () => {
             <p><strong>Check-out Date:</strong> {bookingDetails.checkOutDate}</p>
             <p><strong>Num Of Adults:</strong> {bookingDetails.adultCount}</p>
             <p><strong>Num Of Children:</strong> {bookingDetails.childCount}</p>
+            {bookingDetails.totalPrice && (
+              <p><strong>Total Price Paid:</strong> ${parseFloat(bookingDetails.totalPrice).toFixed(2)}</p>
+            )}
 
             <hr />
             <h3>User Details</h3>
@@ -118,6 +121,9 @@ const ProfilePage = () => {
                       <li><strong>Check-out Date:</strong> {booking.checkOutDate}</li>
                       <li><strong>Total Guests:</strong> {booking.guestTotal}</li>
                       <li><strong>Room Type:</strong> {booking.room.roomType}</li>
+                      {booking.totalPrice && (
+                        <li><strong>Total Price Paid:</strong> ${parseFloat(booking.totalPrice).toFixed(2)}</li>
+                      )}
                     </ul>
                   </div>
                 ))}

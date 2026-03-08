@@ -31,7 +31,7 @@ function App() {
 
             {/* Protected Routes (only for logged-in users) */}
             <Route
-              path="/room-details-book/:roomId"
+              path="/rooms"
               element={
                 <ProtectedRoute>
                   <RoomSearch />

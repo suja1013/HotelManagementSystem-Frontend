@@ -1282,3 +1282,170 @@ button[type="submit"]:hover {
   background-color: #a71d2a; /* darker red on hover */
 }
 
+
+/* DYNAMIC PRICING BREAKDOWN BOX */
+.dynamic-pricing-box {
+  width: 100%;
+  margin-top: 18px;
+  background-color: var(--bg-soft);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.dynamic-pricing-title {
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.dynamic-pricing-loading {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.dynamic-pricing-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Each row: label on left, value on right */
+.pricing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pricing-row:last-child {
+  border-bottom: none;
+}
+
+.pricing-label {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.pricing-value {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Factor badges */
+.pricing-factor {
+  font-weight: 700;
+  font-size: 0.93rem;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background-color: #f3f4f6;
+}
+
+/* Green tint when factor < 1 (discount) */
+.factor-low {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* Amber tint when factor > 1 (surcharge) */
+.factor-high {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+/* Final dynamic price row — bold and highlighted */
+.pricing-row-final {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 2px solid var(--border);
+  border-bottom: none;
+}
+
+.pricing-value-final {
+  color: var(--primary);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* PRICING INSIGHT CARDS */
+.pricing-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.insight-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.insight-text {
+  font-weight: 500;
+}
+
+/* High price — warm amber tint */
+.insight-high {
+  background-color: #fef9c3;
+  color: #854d0e;
+  border-left: 3px solid #facc15;
+}
+
+/* Low price / discount — soft green tint */
+.insight-low {
+  background-color: #dcfce7;
+  color: #166534;
+  border-left: 3px solid #4ade80;
+}
+
+/* Neutral — light grey tint */
+.insight-neutral {
+  background-color: #f3f4f6;
+  color: var(--text-dark);
+  border-left: 3px solid var(--border);
+}
+
+/* INSIGHT BODY — wraps text + amount vertically */
+.insight-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Price impact line below the insight text */
+.insight-amount {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  letter-spacing: 0.2px;
+}
+
+.insight-amount strong {
+  font-weight: 700;
+}
+
+/* PRICING FORMULA LINE */
+.pricing-final-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.pricing-formula {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  font-weight: 400;
+  font-style: italic;
+}

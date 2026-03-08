@@ -145,6 +145,15 @@ export default class APIService {
         return result.data
     }
 
+    //DYNAMIC PRICING
+
+    // Fetches dynamic price breakdown for a room and check-in date
+    static async getDynamicPrice(roomId, checkInDate) {
+        const result = await axios.get(
+            `${this.BASE_URL}/pricing/calculate?roomId=${roomId}&checkInDate=${checkInDate}`
+        )
+        return result.data
+    }
 
     //AUTHENTICATION HELPERS 
 

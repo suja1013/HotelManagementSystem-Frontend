@@ -145,6 +145,22 @@ export default class APIService {
         return result.data
     }
 
+        // Previews the refund amount before confirming cancellation
+    static async previewCancellation(bookingId) {
+        const result = await axios.get(`${this.BASE_URL}/bookings/cancel-preview/${bookingId}`, {
+            headers: this.getHeader()
+        })
+        return result.data
+    }
+
+    // Confirms cancellation — computes refund and deletes the booking
+    static async cancelBooking(bookingId) {
+        const result = await axios.delete(`${this.BASE_URL}/bookings/cancel/${bookingId}`, {
+            headers: this.getHeader()
+        })
+        return result.data
+    }
+    
     //DYNAMIC PRICING
 
     // Fetches dynamic price breakdown for a room and check-in date

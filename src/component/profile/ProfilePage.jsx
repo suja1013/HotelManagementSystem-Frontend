@@ -8,44 +8,93 @@ const ProfilePage = () => {
   const [confirmationCode, setConfirmationCode] = useState('');
   const [bookingDetails, setBookingDetails] = useState(null);
 
-  // Load user info and bookings
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await ApiService.getUserProfile();
-        const userPlusBookings = await ApiService.getUserBookings(response.user.id);
-        setUser(userPlusBookings.user);
-      }
-      catch (error) {
-        setError(error.response?.data?.message || error.message);
-      }
-    };
+  // Cancellation state
+  const [cancelPreview, setCancelPreview]       = useState(null);   // { bookingId, message, refund }
+  const [cancelSuccess, setCancelSuccess]       = useState('');
+  const [cancelLoading, setCancelLoading]       = useState(false);
 
-    fetchUserProfile();
+  // ── Reload user profile (called after cancellation to refresh the list) ──
+  const loadUserProfile = async () => {
+    try {
+      const response = await ApiService.getUserProfile();
+      const userPlusBookings = await ApiService.getUserBookings(response.user.id);
+      setUser(userPlusBookings.user);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  };
+
+  // Load user info and bookings on mount
+  useEffect(() => {
+    loadUserProfile();
   }, []);
 
   // Search booking by confirmation code
   const handleSearch = async () => {
-
-    // If input is empty, reset bookings details and display all the bookings
     if (!confirmationCode.trim()) {
       setBookingDetails(null);
       setError(null);
       return;
     }
-
-    // Booking confirmation code is provided, then search that booking
     try {
       const response = await ApiService.getBookingByConfirmationCode(confirmationCode);
       setBookingDetails(response.booking);
       setError(null);
-    }
-    catch (error) {
-      setBookingDetails(null);  // no specific booking to show
+    } catch (error) {
+      setBookingDetails(null);
       setError(error.response?.data?.message || error.message);
       setTimeout(() => setError(''), 4000);
     }
   };
+
+  // Step 1 — fetch refund preview and show confirmation dialog
+  const handleCancelClick = async (bookingId) => {
+    try {
+      setCancelLoading(true);
+      const response = await ApiService.previewCancellation(bookingId);
+      if (response.statusCode === 200) {
+        setCancelPreview({
+          bookingId,
+          message: response.message,
+          refund: response.cancellationRefund,
+        });
+      } else {
+        setError(response.message);
+        setTimeout(() => setError(''), 4000);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+      setTimeout(() => setError(''), 4000);
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  // Step 2 — user confirmed cancellation
+  const handleConfirmCancel = async () => {
+    if (!cancelPreview) return;
+    try {
+      setCancelLoading(true);
+      const response = await ApiService.cancelBooking(cancelPreview.bookingId);
+      if (response.statusCode === 200) {
+        setCancelSuccess(response.message);
+        setCancelPreview(null);
+        await loadUserProfile();           // refresh booking list
+        setTimeout(() => setCancelSuccess(''), 6000);
+      } else {
+        setError(response.message);
+        setTimeout(() => setError(''), 4000);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+      setTimeout(() => setError(''), 4000);
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  // Dismiss the preview dialog without cancelling
+  const handleDismissPreview = () => setCancelPreview(null);
 
   return (
     <div className="profile-page">
@@ -53,6 +102,50 @@ const ProfilePage = () => {
       {user && <h2>Welcome, {user.name}</h2>}
 
       {error && <p className="error-message">{error}</p>}
+
+      {/* Cancellation success message */}
+      {cancelSuccess && (
+        <div className="cancel-success-message">
+          ✅ {cancelSuccess}
+        </div>
+      )}
+
+      {/* ── Cancellation Confirmation Dialog ── */}
+      {cancelPreview && (
+        <div className="cancel-overlay">
+          <div className="cancel-dialog">
+            <h3>Cancel Booking?</h3>
+            <p className="cancel-dialog-message">{cancelPreview.message}</p>
+
+            {parseFloat(cancelPreview.refund) > 0 ? (
+              <div className="cancel-refund-badge refund-positive">
+                💰 Refund: <strong>${parseFloat(cancelPreview.refund).toFixed(2)}</strong>
+              </div>
+            ) : (
+              <div className="cancel-refund-badge refund-zero">
+                ⚠️ No refund applicable for this cancellation.
+              </div>
+            )}
+
+            <div className="cancel-dialog-actions">
+              <button
+                className="cancel-confirm-btn"
+                onClick={handleConfirmCancel}
+                disabled={cancelLoading}
+              >
+                {cancelLoading ? 'Cancelling...' : 'Yes, Cancel Booking'}
+              </button>
+              <button
+                className="cancel-dismiss-btn"
+                onClick={handleDismissPreview}
+                disabled={cancelLoading}
+              >
+                Keep Booking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* User Personal Info */}
       {user && (
@@ -83,7 +176,7 @@ const ProfilePage = () => {
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {/* Show Only searched booking */}
+        {/* Show only searched booking */}
         {bookingDetails && (
           <div className="booking-details">
             <h3>Booking Details</h3>
@@ -108,7 +201,7 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {/* Show all the bookings when booking confirmation is not provided*/}
+        {/* Show all bookings when no confirmation code is searched */}
         {!bookingDetails && (
           <div className="booking-container">
             {user && user.bookings.length > 0 ? (
@@ -125,6 +218,17 @@ const ProfilePage = () => {
                         <li><strong>Total Price Paid:</strong> ${parseFloat(booking.totalPrice).toFixed(2)}</li>
                       )}
                     </ul>
+
+                    {/* Cancel button — only show if check-in is in the future */}
+                    {new Date(booking.checkInDate) > new Date() && (
+                      <button
+                        className="cancel-booking-btn"
+                        onClick={() => handleCancelClick(booking.id)}
+                        disabled={cancelLoading}
+                      >
+                        {cancelLoading ? 'Loading...' : '✕ Cancel Booking'}
+                      </button>
+                    )}
                   </div>
                 ))}
               </ul>
